@@ -66,6 +66,20 @@ class wechat
             $ToUserName = $postObj->ToUserName;  //微信服务器的标识
             $keyword = trim($postObj->Content);//用户发送过来的内容
             $MsgId=$postObj->MsgId; //消息的id
+            
+            $MsgType = $postObj->MsgType;
+            if(isset($MsgType)&&!empty($MsgType)&&$MsgType=='event')
+            {
+                  switch ($postObj->Event) {
+                      case 'subscribe':  //关注事件
+                          $this->sendSubscribe($postObj);
+                          break;
+                      default:
+                          # code...
+                          break;
+                  }
+            }
+
             if(!empty( $keyword ))
             {
                 switch($keyword)
@@ -115,7 +129,7 @@ class wechat
                         <MsgId>%s</MsgId>
 					</xml>";
         $msgType = "text";
-        $contentStr = "Welcome to duanzhihong world!";
+        $contentStr = "希望每个人都可以快乐!";
         $resultStr = sprintf($textTpl, $postObj->FromUserName, $postObj->ToUserName,time(), $msgType, $contentStr,$postObj->MsgId);
         echo $resultStr;
     }
@@ -177,14 +191,29 @@ class wechat
                        </xml>";
           $MsgType='news';
           $Title='我在北京';
-          $Description='今天是03月21号';
+          $day=date('Y-m-d H:i:s',time());
+          $Description=$day;
           $PicUrl='http://47.94.170.230/wechat/image/test.jpg';
           $Url='http://www.baidu.com';
           $resultStr=sprintf($imgTextTel,$postObj->FromUserName,$postObj->ToUserName,time(),$MsgType,$Title,$Description,$PicUrl,$Url);
           echo $resultStr;
     }
 
-
+    public function sendSubscribe($postObj)
+    {
+        $textTpl = "<xml>
+                        <ToUserName><![CDATA[%s]]></ToUserName>
+                        <FromUserName><![CDATA[%s]]></FromUserName>
+                        <CreateTime>%s</CreateTime>
+                        <MsgType><![CDATA[%s]]></MsgType>
+                        <Content><![CDATA[%s]]></Content>
+                        <MsgId>%s</MsgId>
+                    </xml>";
+        $msgType = "text";
+        $contentStr = "Welcome to my world!";
+        $resultStr = sprintf($textTpl, $postObj->FromUserName, $postObj->ToUserName,time(), $msgType, $contentStr,$postObj->MsgId);
+        echo $resultStr;
+    }
 
 
 
