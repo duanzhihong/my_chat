@@ -74,6 +74,9 @@ class wechat
                       case 'subscribe':  //关注事件
                           $this->sendSubscribe($postObj);
                           break;
+                      case 'unsubscribe'://取消关注事件
+                          $this->saveUnSubscribe($postObj);
+                          break;    
                       default:
                           # code...
                           break;
@@ -199,6 +202,7 @@ class wechat
           echo $resultStr;
     }
 
+    
     public function sendSubscribe($postObj)
     {
         $textTpl = "<xml>
@@ -216,7 +220,14 @@ class wechat
     }
 
 
-
+    public function saveUnSubscribe($postObj)
+    {
+      //记录用户的pid
+        $openID=$postObj->FromUserName;
+      //将用户进行记录
+        $fileName='./unsubscribe.txt';
+        file_put_contents($fileName,date('Y-m-d H:i:s',time()).'---'.$openID,FILE_APPEND);  
+    }
 
 
 
